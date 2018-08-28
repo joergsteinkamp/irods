@@ -343,24 +343,40 @@ packTypeLookup( const char *typeName ) {
     return -1;
 }
 
+// mz_js_20180823:
+// GCC needs the initialization in the same order
+// as defined in the struct (lib/core/include/packStruct.h)
 packedOutput_t
 initPackedOutput( const int len ) {
     return {
         .bBuf={
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+            .len = 0,
+            .buf = malloc(len)
+#else
             .buf=malloc(len),
             .len=0
+#endif
         },
         .bufSize=len,
         .nopackBufArray={}
     };
 }
 
+// mz_js_20180823:
+// GCC needs the initialization in the same order
+// as defined in the struct (lib/core/include/packStruct.h)
 packedOutput_t
 initPackedOutputWithBuf( void *buf, const int len ) {
     return {
         .bBuf={
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+            .len = 0,
+            .buf = buf
+#else
             .buf=buf,
             .len=0
+#endif
         },
         .bufSize=len,
         .nopackBufArray={}

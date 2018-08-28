@@ -410,15 +410,31 @@ namespace irods {
             function<error(plugin_context&)>(
                 impostor_file_open ) );
 
-        add_operation<void*,const int>(
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+	add_operation<void*, int>(
+#else
+	add_operation<void*,const int>(
+#endif
             irods::RESOURCE_OP_READ,
             std::function<
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+                error(irods::plugin_context&,void*, int)>(
+#else
                 error(irods::plugin_context&,void*,const int)>(
+#endif
                     impostor_file_read ) );
 
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+        add_operation<const void*, int>(
+#else
         add_operation<const void*,const int>(
+#endif
             irods::RESOURCE_OP_WRITE,
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+            function<error(plugin_context&,const void*, int)>(
+#else
             function<error(plugin_context&,const void*,const int)>(
+#endif
                 impostor_file_write ) );
 
         add_operation(
@@ -461,7 +477,11 @@ namespace irods {
             function<error(plugin_context&)>(
                 impostor_file_getfs_freespace ) );
 
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+        add_operation<long long, int>(
+#else
         add_operation<const long long, const int>(
+#endif
             irods::RESOURCE_OP_LSEEK,
             function<error(plugin_context&, long long, int)>(
                 impostor_file_lseek ) );

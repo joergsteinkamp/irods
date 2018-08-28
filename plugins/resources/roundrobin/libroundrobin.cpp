@@ -1315,15 +1315,31 @@ irods::resource* plugin_factory( const std::string& _inst_name,
         function<error(plugin_context&)>(
             round_robin_file_open ) );
 
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+    resc->add_operation<void*, int>(
+#else
     resc->add_operation<void*,const int>(
+#endif
         irods::RESOURCE_OP_READ,
         std::function<
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+            error(irods::plugin_context&,void*, int)>(
+#else
             error(irods::plugin_context&,void*,const int)>(
+#endif
                 round_robin_file_read ) );
 
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+    resc->add_operation<const void*, int>(
+#else
     resc->add_operation<const void*,const int>(
+#endif
         irods::RESOURCE_OP_WRITE,
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+        function<error(plugin_context&,const void*, int)>(
+#else
         function<error(plugin_context&,const void*,const int)>(
+#endif
             round_robin_file_write ) );
 
     resc->add_operation(
@@ -1366,9 +1382,17 @@ irods::resource* plugin_factory( const std::string& _inst_name,
         function<error(plugin_context&)>(
             round_robin_file_getfs_freespace ) );
 
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+    resc->add_operation<long long, int>(
+#else
     resc->add_operation<const long long, const int>(
+#endif
         irods::RESOURCE_OP_LSEEK,
+#if not defined(__clang__) && (defined(__GNUC__) || defined(__GNUG__))
+        function<error(plugin_context&, long long, int)>(
+#else
         function<error(plugin_context&, const long long, const int)>(
+#endif
             round_robin_file_lseek ) );
 
     resc->add_operation(
